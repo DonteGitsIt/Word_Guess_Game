@@ -1,3 +1,17 @@
 p{
     font-size: 15px;
 }
+#anime-title{
+    visibility: hidden;
+}
+#anime-image{
+    margin: 25px;
+    visibility: hidden;
+    width: 200px;
+    height: auto;
+}
+
+#resetButton{
+    visibility: hidden;
+
+}
