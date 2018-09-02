@@ -54,10 +54,13 @@ var words = [
     sasuke.word,
     genos.word,
     ],
+    viableKeys= ["q","w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f", "g", "h", "j", "k", "l",
+                "z", "x", "c", "v", "b", "n", "m"],
     lettersGuessed = [],
     currentWord = [],
     wins = 0,
     guesses = 12,
+    gameOver = false,
     winsText = document.getElementById("wins"),
     guessText = document.getElementById("guess-remain"),
     wordText = document.getElementById("current-word"),
@@ -101,10 +104,10 @@ if(comWord === goku.word){
 }
 
 for(i = 0; i < comWord.length; i++){
-    currentWord [i] = "_ "
+    currentWord [i] = "_"
 
 }
-wordText.textContent = currentWord;
+wordText.textContent = currentWord.join(" ");
 var remainingLetters = comWord.length;
 
 // function that calls a new game (runs when user clicks new word buttton)
@@ -144,6 +147,7 @@ function newGame(){
     $("#anime-image").css({"visibility": "hidden" })
     $("#resetButton").css({"visibility": "hidden" })
     //this code resets variables to thier original state and updates page
+    gameOver = false
     guesses = 12
     guessText.innerHTML = guesses
 
@@ -152,28 +156,28 @@ function newGame(){
     currentWord = []
 
     for(i = 0; i < comWord.length; i++){
-        currentWord [i] = "_ "
+        currentWord [i] = "_"
 
     }
-    wordText.innerHTML = currentWord;
+    wordText.innerHTML = currentWord.join(" ");
     remainingLetters = comWord.length
 }
-  
 
 
-
-    
 // function executed when user presses a key
 document.onkeyup = function keyPress(event){
     var userGuess = event.key.toLowerCase()
+    if($.inArray(userGuess, viableKeys) === -1){
+        alert("Enter only letters.")
+    }
     // if statement that runs if the user has yet to guess a letter
-    if (lettersGuessed.length < 1){
+    else if (lettersGuessed.length < 1){
         //loop that checks if user guessed a correct letter and updates page accordingly
         for(k = 0; k < comWord.length; k++){
             if (userGuess === comWord[k]){
                remainingLetters--,
                currentWord[k] = userGuess,
-               wordText.textContent = currentWord;
+               wordText.textContent = currentWord.join(" ");
             }
         } 
         // updates page if user guessed incorrectly 
@@ -190,6 +194,7 @@ document.onkeyup = function keyPress(event){
             if (userGuess === lettersGuessed [j] || $.inArray(userGuess, currentWord) !== -1){
                 alert("You already guessed that letter!")
                 userGuess = ""
+                
             } 
             // if userGuess has not already been guessed and it is not a correct answer, do this.
         }if (userGuess !== "" && $.inArray(userGuess, comWord) === -1){
@@ -198,42 +203,52 @@ document.onkeyup = function keyPress(event){
             lettersGuessed.push( " " + userGuess),
             lettersText.textContent = lettersGuessed;
 
-            
+            // if userGuess is correct and userGuess has not already been guessed
+        }else if ($.inArray(userGuess, comWord) !== -1 && $.inArray(userGuess, currentWord) === -1){
+            //loop that updates page if user guesses a correct letter 
+            for(k = 0; k < comWord.length; k++){
+                if (userGuess === comWord[k]) {
+                   currentWord[k] = userGuess,
+                   wordText.textContent = currentWord.join(" "),
+                   remainingLetters--;
+                
+                } 
+            }
         }
                 
-        //loop that updates page if user guesses a correct letter 
-        for(k = 0; k < comWord.length; k++){
-            if (userGuess === comWord[k]) {
-               currentWord[k] = userGuess,
-               wordText.textContent = currentWord,
-               remainingLetters--;
-            
-            } 
+        
+        
         }
-            
-            
-        }
+       
+
+    
 //code to determine if user won or lost
-    if (remainingLetters === 0){
+    if (remainingLetters < 1 && gameOver === false){
         wins++
         winsText.textContent = wins
-        alert("You won! To try another click the New Word button.")
+        gameOver = true
+        
         // function that forces the user to pick a new word in order to continue to guess letters
-        document.onkeyup = function(){
-            userGuess = ""
-            alert("You won, good job! click the New Word button.")
+        document.onkeypress = function(){
+            if(remainingLetters < 1){
+                userGuess = ""
+                alert("You won, good job! click the New Word button.")
+            }
          }
          //reveals picture and title for guessed word, also reveals the new word button
         $("#anime-title").css({"visibility": "visible" })
         $("#anime-image").css({"visibility": "visible" })
         $("#resetButton").css({"visibility": "visible" })
     }
-    if (guesses === 0){
+    if (guesses < 1 && gameOver === false){
+        gameOver = true
         alert("Oh no you lost! click the New Word Button to try again.")
         // function that forces the user to pick a new word in order to continue to guess letters
-        document.onkeyup = function(){
-            userGuess = ""
-            alert("You lost okay? click the New Word button.")
+        document.onkeypress = function(){
+            if(guesses < 1){
+                userGuess = ""
+                alert("You lost okay? click the New Word button.")
+            }
          }
         $("#resetButton").css({"visibility": "visible" })
     }
