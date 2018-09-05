@@ -167,44 +167,50 @@ function newGame(){
 // function executed when user presses a key
 document.onkeyup = function keyPress(event){
     var userGuess = event.key.toLowerCase()
-    if($.inArray(userGuess, viableKeys) === -1){
+    if(viableKeys.indexOf(userGuess) === -1){
         alert("Enter only letters.")
     }
     // if statement that runs if the user has yet to guess a letter
-    else if (lettersGuessed.length < 1){
-        //loop that checks if user guessed a correct letter and updates page accordingly
-        for(k = 0; k < comWord.length; k++){
-            if (userGuess === comWord[k]){
-               remainingLetters--,
-               currentWord[k] = userGuess,
-               wordText.textContent = currentWord.join(" ");
-            }
-        } 
+    else if (lettersGuessed.length === 0){
+
+        if (lettersGuessed.indexOf(userGuess) !==-1 || currentWord.indexOf(userGuess) !==-1){
+            alert("You already guessed that letter!")
+            userGuess = ""
+        }else if (comWord.indexOf(userGuess) !==-1){
+            //loop that checks if user guessed a correct letter and updates page accordingly
+            for(k = 0; k < comWord.length; k++){
+                if (userGuess === comWord[k]){
+                remainingLetters--,
+                currentWord[k] = userGuess,
+                wordText.textContent = currentWord.join(" ");
+                }
+            } 
+        }
         // updates page if user guessed incorrectly 
-       if ($.inArray(userGuess, comWord) === -1){
+       else if (comWord.indexOf(userGuess) === -1){
         lettersGuessed.push(userGuess),
         lettersText.textContent = lettersGuessed;
         guesses--;
         guessText.textContent = guesses;
        }
-        //if statement that runs if the user has already guessed a letter
-     } else if (lettersGuessed.length > 0){
-        for(j = 0; j < lettersGuessed.length; j++){
-            //if user already guessed that do this
-            if (userGuess === lettersGuessed [j] || $.inArray(userGuess, currentWord) !== -1){
+    //if statement that runs if the user has already guessed a letter
+    }else if (lettersGuessed.length > 0){
+        //if user already guessed that do this
+        if (lettersGuessed.indexOf(userGuess) !==-1 || currentWord.indexOf(userGuess) !==-1){
                 alert("You already guessed that letter!")
-                userGuess = ""
                 
-            } 
-            // if userGuess has not already been guessed and it is not a correct answer, do this.
-        }if (userGuess !== "" && $.inArray(userGuess, comWord) === -1){
+                
+         
+        // if userGuess has not already been guessed and it is not a correct answer, do this.
+        }else if (comWord.indexOf(userGuess) ===-1 && lettersGuessed.indexOf(userGuess) ===-1){
+            
             guesses--,
             guessText.textContent = guesses,
-            lettersGuessed.push( " " + userGuess),
+            lettersGuessed.push(userGuess),
             lettersText.textContent = lettersGuessed;
-
-            // if userGuess is correct and userGuess has not already been guessed
-        }else if ($.inArray(userGuess, comWord) !== -1 && $.inArray(userGuess, currentWord) === -1){
+        
+        // if userGuess is correct and userGuess has not already been guessed
+        }else if (comWord.indexOf(userGuess) !==-1 && currentWord.indexOf(userGuess) ===-1){
             //loop that updates page if user guesses a correct letter 
             for(k = 0; k < comWord.length; k++){
                 if (userGuess === comWord[k]) {
@@ -218,7 +224,7 @@ document.onkeyup = function keyPress(event){
                 
         
         
-        }
+    }
        
 
     
